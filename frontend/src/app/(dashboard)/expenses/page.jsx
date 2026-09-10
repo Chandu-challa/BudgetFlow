@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { api } from "@/lib/api";
+import { api, API_BASE_URL } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { formatCurrency } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -239,7 +239,7 @@ export default function ExpensesPage() {
       search,
       category: selectedCategory,
     }).toString();
-    window.open(`http://localhost:8000/api/reports/export/?${query}`, "_blank");
+    window.open(`${API_BASE_URL}reports/export/?${query}`, "_blank");
   };
 
   return (
