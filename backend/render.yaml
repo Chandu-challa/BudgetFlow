@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: chmod +x build.sh && ./build.sh
-    startCommand: gunicorn budgetflow_backend.wsgi:application
+    startCommand: python manage.py migrate --no-input && python manage.py seed_data && gunicorn budgetflow_backend.wsgi:application
     healthCheckPath: /api/health/
     envVars:
       - key: PYTHON_VERSION

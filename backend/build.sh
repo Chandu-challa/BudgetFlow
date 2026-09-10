@@ -9,4 +9,7 @@ pip install -r requirements.txt
 python manage.py collectstatic --no-input
 
 # Run database migrations
-python manage.py migrate
+python manage.py migrate --no-input
+
+# Seed default categories and admin credentials
+python manage.py seed_data
