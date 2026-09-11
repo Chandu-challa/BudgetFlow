@@ -30,27 +30,40 @@ export default function DashboardPage() {
     const [activities, setActivities] = useState(null);
     const [loading, setLoading] = useState(true);
     const [insights, setInsights] = useState(null);
+    const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+
     const fetchDashboardData = async () => {
         try {
-            const response = await api.get("analytics/dashboard/");
+            const params = {};
+            if (startDate && endDate) {
+                params.start_date = startDate;
+                params.end_date = endDate;
+            } else {
+                params.month = month;
+                params.year = year;
+            }
+            const response = await api.get("analytics/dashboard/", { params });
             setMetrics(response.data.metrics);
             setCharts(response.data.charts);
             setActivities(response.data.recent_activity);
-            // Fetch smart insights
-            const insightsResponse = await api.get("analytics/smart-insights/");
+            
+            const insightsResponse = await api.get("analytics/smart-insights/", { params });
             setInsights(insightsResponse.data);
         }
         catch (error) {
-            const err = error;
-            console.error("Error loading dashboard metrics", err);
+            console.error("Error loading dashboard metrics", error);
         }
         finally {
             setLoading(false);
         }
     };
     useEffect(() => {
+        setLoading(true);
         fetchDashboardData();
-    }, []);
+    }, [month, year, startDate, endDate]);
     const COLORS = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f43f5e"];
     if (loading) {
         return (<div className="space-y-6">
@@ -83,6 +96,29 @@ export default function DashboardPage() {
             <Activity className="h-4 w-4 text-primary animate-pulse"/>
             <span className="text-muted-foreground">{insights.delta_comparison.text}</span>
           </div>)}
+        
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-2 mt-4 md:mt-0">
+          <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-xl border border-border">
+            <select value={month} onChange={(e) => { setMonth(e.target.value); setStartDate(''); setEndDate(''); }} className="bg-card text-xs font-semibold px-2 py-1.5 rounded-lg border-none focus:ring-0 cursor-pointer text-foreground">
+              {Array.from({length: 12}, (_, i) => i + 1).map(m => (
+                <option key={m} value={m}>{new Date(0, m - 1).toLocaleString('default', { month: 'short' })}</option>
+              ))}
+            </select>
+            <select value={year} onChange={(e) => { setYear(e.target.value); setStartDate(''); setEndDate(''); }} className="bg-card text-xs font-semibold px-2 py-1.5 rounded-lg border-none focus:ring-0 cursor-pointer text-foreground">
+              {[...Array(5)].map((_, i) => {
+                const y = new Date().getFullYear() - i;
+                return <option key={y} value={y}>{y}</option>
+              })}
+            </select>
+          </div>
+          
+          <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-xl border border-border">
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="bg-card text-xs font-semibold px-2 py-1 rounded-lg border-none focus:ring-0 cursor-pointer text-foreground" title="Start Date" />
+            <span className="text-muted-foreground text-xs">to</span>
+            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="bg-card text-xs font-semibold px-2 py-1 rounded-lg border-none focus:ring-0 cursor-pointer text-foreground" title="End Date" />
+          </div>
+        </div>
       </motion.div>
 
       {/* Metric Summary Cards */}

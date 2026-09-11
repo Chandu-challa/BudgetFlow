@@ -75,7 +75,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         setUser(null);
-        router.push("/login");
+        window.location.href = "/login";
     }
     const updateProfile = async (formData) => {
         try {
@@ -97,13 +97,13 @@ export function AuthProvider({ children }) {
         const isPublic = publicPages.some(page => pathname.startsWith(page));
         if (!loading) {
             if (!user && !isPublic) {
-                router.push("/login");
+                window.location.href = "/login";
             }
             else if (user && isPublic) {
                 router.push("/dashboard");
             }
         }
-    }, [user, loading, pathname]);
+    }, [user, loading, pathname, router]);
     return (<AuthContext.Provider value={{
             user,
             loading,

@@ -325,39 +325,39 @@ export default function AdminPage() {
               <span>{userError}</span>
             </div>)}
 
-          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-secondary/40 border-b border-border text-xs font-semibold text-muted-foreground uppercase">
-                    <th className="px-6 py-4">Username</th>
-                    <th className="px-6 py-4">Email</th>
-                    <th className="px-6 py-4">Full Name</th>
-                    <th className="px-6 py-4">User Role</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
+            <div className="flex-1 overflow-auto scrollbar-thin">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead className="sticky top-0 z-10 bg-secondary/95 backdrop-blur-md shadow-sm">
+                  <tr className="border-b border-border text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    <th className="px-4 py-2.5">Username</th>
+                    <th className="px-4 py-2.5">Email</th>
+                    <th className="px-4 py-2.5">Full Name</th>
+                    <th className="px-4 py-2.5">User Role</th>
+                    <th className="px-4 py-2.5">Status</th>
+                    <th className="px-4 py-2.5 text-right sticky right-0 bg-secondary/95 backdrop-blur-md z-20">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border text-sm">
-                  {users.map((u) => (<tr key={u.id} className="hover:bg-secondary/20 transition-colors">
-                      <td className="px-6 py-4 font-semibold">{u.username}</td>
-                      <td className="px-6 py-4">{u.email}</td>
-                      <td className="px-6 py-4 text-slate-500 font-medium">{u.name || "-"}</td>
-                      <td className="px-6 py-4">
-                        <button onClick={() => handleToggleUserRole(u)} className={`inline-flex items-center gap-1 py-1 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${u.role === "ADMIN"
+                <tbody className="divide-y divide-border">
+                  {users.map((u) => (<tr key={u.id} className="hover:bg-secondary/40 transition-colors group">
+                      <td className="px-4 py-2 font-semibold text-foreground">{u.username}</td>
+                      <td className="px-4 py-2 text-slate-500 font-medium">{u.email}</td>
+                      <td className="px-4 py-2 text-slate-500 font-medium">{u.name || "-"}</td>
+                      <td className="px-4 py-2">
+                        <button onClick={() => handleToggleUserRole(u)} className={`inline-flex items-center gap-1 py-0.5 px-2 rounded-md text-[10px] font-bold transition-all cursor-pointer ${u.role === "ADMIN"
                     ? "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
                     : "bg-secondary text-foreground"}`}>
                           {u.role}
                         </button>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-2">
                         <button onClick={() => handleToggleUserActive(u)} className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors" title={u.is_active ? "Block User" : "Activate User"}>
-                          {u.is_active ? (<span className="inline-flex items-center gap-1 py-1 px-2 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded-lg uppercase">Active</span>) : (<span className="inline-flex items-center gap-1 py-1 px-2 bg-destructive/10 text-destructive text-[10px] font-bold rounded-lg uppercase">Blocked</span>)}
+                          {u.is_active ? (<span className="inline-flex items-center gap-1 py-0.5 px-2 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded-md border border-emerald-500/20 uppercase">Active</span>) : (<span className="inline-flex items-center gap-1 py-0.5 px-2 bg-destructive/10 text-destructive text-[10px] font-bold rounded-md border border-destructive/20 uppercase">Blocked</span>)}
                         </button>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <button onClick={() => handleDeleteUser(u.id)} className="p-1.5 rounded-lg text-slate-500 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer" title="Delete User" disabled={u.id === currentUser.id}>
-                          <Trash2 className="h-4 w-4"/>
+                      <td className="px-4 py-2 text-right sticky right-0 bg-background/95 backdrop-blur-md z-10 group-hover:bg-secondary/40">
+                        <button onClick={() => handleDeleteUser(u.id)} className="p-1.5 rounded-md text-slate-500 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer" title="Delete User" disabled={u.id === currentUser.id}>
+                          <Trash2 className="h-3.5 w-3.5"/>
                         </button>
                       </td>
                     </tr>))}

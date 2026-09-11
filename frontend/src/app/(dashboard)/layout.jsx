@@ -9,7 +9,7 @@ import { LayoutDashboard, Receipt, CircleDollarSign, PiggyBank, CalendarDays, Be
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function DashboardLayout({ children }) {
-    const { user, logout } = useAuth();
+    const { user, loading, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const pathname = usePathname();
     const router = useRouter();
@@ -84,13 +84,18 @@ export default function DashboardLayout({ children }) {
         const matched = navItems.find(item => item.href === pathname);
         return matched ? matched.name : "BudgetFlow";
     };
-    if (!user) {
+    
+    if (loading) {
         return (<div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
           <span className="text-sm text-slate-400">Verifying session...</span>
         </div>
       </div>);
+    }
+    
+    if (!user) {
+        return null;
     }
     return (<div className="min-h-screen flex bg-background text-foreground transition-colors duration-200">
       {/* SIDEBAR FOR DESKTOP */}

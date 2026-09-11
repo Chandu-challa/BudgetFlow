@@ -268,52 +268,62 @@ export default function IncomePage() {
           </div>) : incomes.length === 0 ? (<div className="py-20 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
             <Plus className="h-10 w-10 text-slate-600 mb-2"/>
             <span>No income records recorded for the current search query.</span>
-          </div>) : (<div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-secondary/40 border-b border-border text-xs font-semibold text-muted-foreground uppercase">
-                  <th className="px-6 py-4 w-12">
-                    <input type="checkbox" onChange={handleSelectAll} checked={selectedIds.length === incomes.length && incomes.length > 0} className="rounded border-border text-primary focus:ring-primary w-4 h-4 cursor-pointer"/>
+          </div>) : (
+          <div className="flex-1 overflow-auto scrollbar-thin">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead className="sticky top-0 z-10 bg-secondary/95 backdrop-blur-md shadow-sm">
+                <tr className="border-b border-border text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                  <th className="px-4 py-2.5 w-10">
+                    <input type="checkbox" onChange={handleSelectAll} checked={selectedIds.length === incomes.length && incomes.length > 0} className="rounded border-border text-primary focus:ring-primary w-3.5 h-3.5 cursor-pointer"/>
                   </th>
-                  <th className="px-6 py-4">Source</th>
-                  <th className="px-6 py-4">Description</th>
-                  <th className="px-6 py-4">Amount</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4">Attachment</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-4 py-2.5">Source</th>
+                  <th className="px-4 py-2.5">Description</th>
+                  <th className="px-4 py-2.5">Amount</th>
+                  <th className="px-4 py-2.5">Date</th>
+                  <th className="px-4 py-2.5">Attachment</th>
+                  <th className="px-4 py-2.5 text-right sticky right-0 bg-secondary/95 backdrop-blur-md z-20">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border text-sm">
-                {incomes.map((inc) => (<tr key={inc.id} className="hover:bg-secondary/20 transition-colors">
-                    <td className="px-6 py-4">
-                      <input type="checkbox" checked={selectedIds.includes(inc.id)} onChange={(e) => handleSelectRow(inc.id, e.target.checked)} className="rounded border-border text-primary focus:ring-primary w-4 h-4 cursor-pointer"/>
+              <tbody className="divide-y divide-border">
+                {incomes.map((inc) => (<tr key={inc.id} className="hover:bg-secondary/40 transition-colors group">
+                    <td className="px-4 py-2">
+                      <input type="checkbox" checked={selectedIds.includes(inc.id)} onChange={(e) => handleSelectRow(inc.id, e.target.checked)} className="rounded border-border text-primary focus:ring-primary w-3.5 h-3.5 cursor-pointer"/>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-block py-1 px-2.5 bg-emerald-500/10 text-emerald-500 text-xs font-bold rounded-full">
+                    <td className="px-4 py-2">
+                      <span className="inline-block py-0.5 px-2 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded-md border border-emerald-500/20">
                         {inc.source}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-medium max-w-xs truncate">
+                    <td className="px-4 py-2 font-medium max-w-xs truncate">
                       {inc.description || <span className="text-slate-500 italic">No description</span>}
                     </td>
-                    <td className="px-6 py-4 font-bold text-emerald-500">
+                    <td className="px-4 py-2 font-bold text-emerald-500">
                       {formatCurrency(inc.amount, user?.currency)}
                     </td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-500">
+                    <td className="px-4 py-2 font-medium text-slate-500">
                       {new Date(inc.date).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
-                      {inc.proof ? (<a href={inc.proof} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-1 text-xs font-semibold">
-                          <Paperclip className="h-3.5 w-3.5"/> Attachment
-                        </a>) : (<span className="text-xs text-slate-500">-</span>)}
+                    <td className="px-4 py-2">
+                      {inc.proof ? (
+                        <div className="relative inline-block group/receipt">
+                          <a href={inc.proof} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-1 font-semibold">
+                            <Paperclip className="h-3 w-3"/>
+                          </a>
+                          <div className="absolute hidden z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 w-24 bg-card border border-border shadow-xl rounded-lg p-0.5 pointer-events-none group-hover/receipt:block">
+                             <img src={inc.proof} alt="Preview" className="w-full h-auto object-cover rounded bg-secondary/50" onError={(e) => e.target.style.display = 'none'} />
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-slate-500">-</span>
+                      )}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-1.5">
-                        <button onClick={() => handleOpenEditModal(inc)} className="p-1.5 rounded-lg text-slate-500 hover:text-foreground hover:bg-secondary cursor-pointer" title="Edit">
-                          <Edit2 className="h-4 w-4"/>
+                    <td className="px-4 py-2 text-right sticky right-0 bg-background/95 backdrop-blur-md z-10 group-hover:bg-secondary/40">
+                      <div className="flex justify-end gap-1">
+                        <button onClick={() => handleOpenEditModal(inc)} className="p-1.5 rounded-md text-slate-500 hover:text-foreground hover:bg-secondary cursor-pointer" title="Edit">
+                          <Edit2 className="h-3.5 w-3.5"/>
                         </button>
-                        <button onClick={() => handleDelete(inc.id)} className="p-1.5 rounded-lg text-slate-500 hover:text-destructive hover:bg-destructive/10 cursor-pointer" title="Delete">
-                          <Trash2 className="h-4 w-4"/>
+                        <button onClick={() => handleDelete(inc.id)} className="p-1.5 rounded-md text-slate-500 hover:text-destructive hover:bg-destructive/10 cursor-pointer" title="Delete">
+                          <Trash2 className="h-3.5 w-3.5"/>
                         </button>
                       </div>
                     </td>
