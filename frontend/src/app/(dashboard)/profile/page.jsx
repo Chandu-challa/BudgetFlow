@@ -5,6 +5,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
 import { User, Mail, Coins, Landmark, Upload, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
+
 const profileSchema = zod.object({
     name: zod.string().min(2, "Name must be at least 2 characters"),
     email: zod.string().email("Invalid email address"),
@@ -57,13 +72,19 @@ export default function ProfilePage() {
             setLoading(false);
         }
     };
-    return (<div className="space-y-6 max-w-2xl mx-auto">
-      <div>
+    return (
+      <motion.div 
+        className="space-y-6 w-full max-w-2xl mx-auto"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+      <motion.div variants={itemVariants}>
         <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Profile Settings</h2>
         <p className="text-muted-foreground text-sm">Manage personal configurations and defaults.</p>
-      </div>
+      </motion.div>
 
-      <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
+      <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-8 shadow-sm">
         {success && (<div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-xs font-semibold flex items-center gap-2">
             <CheckCircle2 className="h-4.5 w-4.5"/>
             <span>Profile settings updated successfully!</span>
@@ -165,6 +186,6 @@ export default function ProfilePage() {
             </button>
           </div>
         </form>
-      </div>
-    </div>);
+      </motion.div>
+    </motion.div>);
 }

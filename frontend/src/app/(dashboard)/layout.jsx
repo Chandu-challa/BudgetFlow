@@ -6,6 +6,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { api } from "@/lib/api";
 import { LayoutDashboard, Receipt, CircleDollarSign, PiggyBank, CalendarDays, Bell, Sun, Moon, LogOut, User, ShieldCheck, Menu, X, CreditCard, CheckSquare } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
 export default function DashboardLayout({ children }) {
     const { user, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
@@ -237,8 +239,19 @@ export default function DashboardLayout({ children }) {
         </header>
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 overflow-y-auto p-6 bg-background/50 transition-colors duration-200">
-          {children}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-background/50 transition-colors duration-200">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="w-full h-full"
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>);

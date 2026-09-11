@@ -7,6 +7,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
 import { Plus, Trash2, X, Loader2, PiggyBank, TrendingUp, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
+
 const goalSchema = zod.object({
     name: zod.string().min(2, "Goal Name must be at least 2 characters"),
     target_amount: zod.coerce.number().min(0.01, "Target amount must be greater than 0"),
@@ -109,9 +124,14 @@ export default function SavingsGoalsPage() {
             setSubmitting(false);
         }
     };
-    return (<div className="space-y-6 max-w-7xl mx-auto">
+    return (<motion.div 
+      className="space-y-6 w-full"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Savings Goals</h2>
           <p className="text-muted-foreground text-sm">Define asset funds and track your savings trajectories.</p>
@@ -119,12 +139,12 @@ export default function SavingsGoalsPage() {
         <button onClick={handleOpenAddModal} className="py-2.5 px-4 bg-primary text-white rounded-xl font-semibold text-xs flex items-center gap-2 hover:bg-primary/95 shadow-md shadow-primary/25 cursor-pointer">
           <Plus className="h-4 w-4"/> Add Goal
         </button>
-      </div>
+      </motion.div>
 
       {loading ? (<div className="py-20 text-center flex flex-col items-center justify-center gap-3">
           <Loader2 className="h-8 w-8 text-primary animate-spin"/>
           <span className="text-sm text-muted-foreground">Loading savings goals...</span>
-        </div>) : goals.length === 0 ? (<div className="bg-card border border-border rounded-3xl p-12 text-center max-w-xl mx-auto flex flex-col items-center gap-3">
+        </div>) : goals.length === 0 ? (<motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-12 text-center max-w-xl mx-auto flex flex-col items-center gap-3">
           <PiggyBank className="h-12 w-12 text-slate-600 mb-2"/>
           <h3 className="text-lg font-bold">No Active Savings Goals</h3>
           <p className="text-xs text-muted-foreground">
@@ -133,11 +153,11 @@ export default function SavingsGoalsPage() {
           <button onClick={handleOpenAddModal} className="py-2.5 px-4 bg-primary text-white rounded-xl font-semibold text-xs mt-3 hover:bg-primary/95 cursor-pointer">
             Create New Savings Goal
           </button>
-        </div>) : (<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        </motion.div>) : (<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {goals.map((g) => {
                 const isCompleted = g.current_amount >= g.target_amount;
                 const pct = Math.min(g.progress_percentage || 0, 100);
-                return (<div key={g.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:shadow-md transition-all relative overflow-hidden">
+                return (<motion.div variants={itemVariants} key={g.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:shadow-md transition-all relative overflow-hidden">
                 {isCompleted && (<div className="absolute top-0 right-0 bg-emerald-500 text-white py-1 px-3 rounded-bl-xl text-[9px] font-bold uppercase tracking-widest flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3"/> Reached
                   </div>)}
@@ -180,7 +200,7 @@ export default function SavingsGoalsPage() {
                 {!isCompleted && (<button onClick={() => handleOpenContrib(g)} className="w-full mt-3 flex items-center justify-center gap-1.5 py-2 px-3 bg-secondary hover:bg-primary hover:text-white rounded-xl text-xs font-semibold transition-all cursor-pointer border border-border hover:border-primary">
                     <TrendingUp className="h-3.5 w-3.5"/> Save Contribution
                   </button>)}
-              </div>);
+              </motion.div>);
             })}
         </div>)}
 
@@ -276,5 +296,5 @@ export default function SavingsGoalsPage() {
             </form>
           </div>
         </div>)}
-    </div>);
+    </motion.div>);
 }

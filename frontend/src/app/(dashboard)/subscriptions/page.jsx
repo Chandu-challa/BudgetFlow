@@ -7,6 +7,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
 import { Plus, Trash2, Edit2, X, Loader2, AlertTriangle, CreditCard } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
+
 const subscriptionSchema = zod.object({
     name: zod.string().min(2, "Subscription name must be at least 2 characters"),
     amount: zod.coerce.number().min(0.01, "Amount must be greater than 0"),
@@ -124,9 +139,14 @@ export default function SubscriptionsPage() {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays >= 0 && diffDays <= 7;
     };
-    return (<div className="space-y-6 max-w-7xl mx-auto">
+    return (<motion.div 
+      className="space-y-6 w-full"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Subscriptions Tracker</h2>
           <p className="text-muted-foreground text-sm">Control recurring memberships, streaming packages, and renewals.</p>
@@ -134,10 +154,10 @@ export default function SubscriptionsPage() {
         <button onClick={handleOpenAddModal} className="py-2.5 px-4 bg-primary text-white rounded-xl font-semibold text-xs flex items-center gap-2 hover:bg-primary/95 shadow-md shadow-primary/25 cursor-pointer">
           <Plus className="h-4 w-4"/> Add Subscription
         </button>
-      </div>
+      </motion.div>
 
       {/* Aggregate Stats Card */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm md:col-span-1 flex items-center gap-4">
           <div className="p-3 bg-primary/10 text-primary rounded-2xl">
             <CreditCard className="h-6 w-6"/>
@@ -160,10 +180,10 @@ export default function SubscriptionsPage() {
               </p>
             </div>
           </div>)}
-      </div>
+      </motion.div>
 
       {/* List */}
-      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+      <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
         {loading ? (<div className="py-20 text-center flex flex-col items-center justify-center gap-3">
             <Loader2 className="h-8 w-8 text-primary animate-spin"/>
             <span className="text-sm text-muted-foreground">Loading subscriptions...</span>
@@ -221,14 +241,14 @@ export default function SubscriptionsPage() {
               </tbody>
             </table>
           </div>)}
-      </div>
+      </motion.div>
 
       {/* MODAL */}
       {modalOpen && (<div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-card border border-border w-full max-w-md rounded-3xl overflow-hidden shadow-2xl relative">
             <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-card">
               <h3 className="text-lg font-bold">
-                {editingSubscription ? "Modify Subscription" : "Log Subscription"}
+                {editingSubscription ? "Edit Subscription" : "New Subscription"}
               </h3>
               <button onClick={() => setModalOpen(false)} className="text-slate-500 hover:text-foreground cursor-pointer">
                 <X className="h-5 w-5"/>
@@ -242,9 +262,9 @@ export default function SubscriptionsPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                  Service Name / Merchant
+                  Service Name
                 </label>
-                <input type="text" placeholder="e.g. Netflix, Spotify Premium" {...register("name")} className="w-full px-4 py-2.5 bg-secondary border border-border rounded-xl text-sm focus:outline-none focus:border-primary text-foreground"/>
+                <input type="text" placeholder="e.g. Netflix, Spotify" {...register("name")} className="w-full px-4 py-2.5 bg-secondary border border-border rounded-xl text-sm focus:outline-none focus:border-primary text-foreground" autoFocus/>
                 {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>}
               </div>
 
@@ -256,10 +276,9 @@ export default function SubscriptionsPage() {
                   <input type="number" step="0.01" placeholder="0.00" {...register("amount")} className="w-full px-4 py-2.5 bg-secondary border border-border rounded-xl text-sm focus:outline-none focus:border-primary text-foreground"/>
                   {errors.amount && <p className="text-red-400 text-xs mt-1">{errors.amount.message}</p>}
                 </div>
-
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                    Frequency
+                    Billing Cycle
                   </label>
                   <select {...register("frequency")} className="w-full px-4 py-2.5 bg-secondary border border-border rounded-xl text-sm focus:outline-none focus:border-primary text-foreground">
                     <option value="Weekly">Weekly</option>
@@ -272,7 +291,7 @@ export default function SubscriptionsPage() {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                  Renewal Date
+                  Next Renewal Date
                 </label>
                 <input type="date" {...register("renewal_date")} className="w-full px-4 py-2.5 bg-secondary border border-border rounded-xl text-sm focus:outline-none focus:border-primary text-foreground"/>
                 {errors.renewal_date && <p className="text-red-400 text-xs mt-1">{errors.renewal_date.message}</p>}
@@ -291,5 +310,5 @@ export default function SubscriptionsPage() {
             </form>
           </div>
         </div>)}
-    </div>);
+    </motion.div>);
 }

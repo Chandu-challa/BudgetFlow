@@ -5,6 +5,21 @@ import { api } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 import { Users, TrendingUp, TrendingDown, Activity, Trash2, ShieldAlert, Plus, Loader2, Lock, Tag } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, PieChart, Pie, Cell } from "recharts";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
+
 export default function AdminPage() {
     const { user: currentUser } = useAuth();
     const [activeTab, setActiveTab] = useState("dashboard");
@@ -161,15 +176,21 @@ export default function AdminPage() {
         <span className="text-sm text-muted-foreground">Loading administrator portal...</span>
       </div>);
     }
-    return (<div className="space-y-6 max-w-7xl mx-auto">
+    return (
+      <motion.div 
+        className="space-y-6 w-full"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
       {/* Title */}
-      <div>
+      <motion.div variants={itemVariants}>
         <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Admin Control Console</h2>
         <p className="text-muted-foreground text-sm">System-wide monitoring, category management, and user auditing.</p>
-      </div>
+      </motion.div>
 
       {/* Navigation tabs */}
-      <div className="flex border-b border-border gap-2">
+      <motion.div variants={itemVariants} className="flex border-b border-border gap-2">
         <button onClick={() => setActiveTab("dashboard")} className={`pb-3 px-4 text-sm font-semibold transition-all border-b-2 cursor-pointer ${activeTab === "dashboard"
             ? "border-primary text-primary"
             : "border-transparent text-muted-foreground hover:text-foreground"}`}>
@@ -185,7 +206,7 @@ export default function AdminPage() {
             : "border-transparent text-muted-foreground hover:text-foreground"}`}>
           Categories Manager
         </button>
-      </div>
+      </motion.div>
 
       {/* DASHBOARD TAB */}
       {activeTab === "dashboard" && metrics && (<div className="space-y-6">
@@ -379,5 +400,5 @@ export default function AdminPage() {
             </div>
           </div>
         </div>)}
-    </div>);
+    </motion.div>);
 }

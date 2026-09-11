@@ -6,6 +6,23 @@ import { formatCurrency } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Scale, PiggyBank, Calendar, Activity, ArrowRight } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from "recharts";
 import Link from "next/link";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
 export default function DashboardPage() {
     const { user } = useAuth();
     const [metrics, setMetrics] = useState(null);
@@ -48,9 +65,14 @@ export default function DashboardPage() {
         </div>
       </div>);
     }
-    return (<div className="space-y-6 max-w-7xl mx-auto">
+    return (<motion.div 
+      className="space-y-6 w-full"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Hello, {user?.name || user?.username}!</h2>
           <p className="text-muted-foreground text-sm">Here is your financial workspace summary for today.</p>
@@ -61,12 +83,12 @@ export default function DashboardPage() {
             <Activity className="h-4 w-4 text-primary animate-pulse"/>
             <span className="text-muted-foreground">{insights.delta_comparison.text}</span>
           </div>)}
-      </div>
+      </motion.div>
 
       {/* Metric Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Total Income */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md">
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md cursor-default">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Income</span>
             <div className="p-2 bg-emerald-500/10 text-emerald-500 rounded-xl">
@@ -77,10 +99,10 @@ export default function DashboardPage() {
             <h3 className="text-2xl font-bold">{formatCurrency(metrics?.total_income || 0, user?.currency)}</h3>
             <p className="text-xs text-muted-foreground mt-1">Cumulative earned lifetime</p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Total Expenses */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md">
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md cursor-default">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Expenses</span>
             <div className="p-2 bg-rose-500/10 text-rose-500 rounded-xl">
@@ -91,10 +113,10 @@ export default function DashboardPage() {
             <h3 className="text-2xl font-bold">{formatCurrency(metrics?.total_expenses || 0, user?.currency)}</h3>
             <p className="text-xs text-muted-foreground mt-1">Cumulative spent lifetime</p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Remaining Budget / Net Savings */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md">
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md cursor-default">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Net Savings</span>
             <div className="p-2 bg-indigo-500/10 text-indigo-500 rounded-xl">
@@ -107,10 +129,10 @@ export default function DashboardPage() {
             </h3>
             <p className="text-xs text-muted-foreground mt-1">Remaining balance sheet</p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Total Savings Goals */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md">
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md cursor-default">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Saved Goals</span>
             <div className="p-2 bg-violet-500/10 text-violet-500 rounded-xl">
@@ -121,10 +143,10 @@ export default function DashboardPage() {
             <h3 className="text-2xl font-bold">{formatCurrency(metrics?.total_savings || 0, user?.currency)}</h3>
             <p className="text-xs text-muted-foreground mt-1">Current amount across goals</p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Current Month Spending */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md">
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md cursor-default">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Month Spending</span>
             <div className="p-2 bg-amber-500/10 text-amber-500 rounded-xl">
@@ -139,10 +161,10 @@ export default function DashboardPage() {
               Limit: {formatCurrency(user?.monthly_income || 0, user?.currency)} (Income)
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Current Week Spending */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md">
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-card border border-border rounded-2xl p-5 shadow-sm transition-all hover:shadow-md cursor-default">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Week Spending</span>
             <div className="p-2 bg-blue-500/10 text-blue-500 rounded-xl">
@@ -153,8 +175,8 @@ export default function DashboardPage() {
             <h3 className="text-2xl font-bold">{formatCurrency(metrics?.current_week_spending || 0, user?.currency)}</h3>
             <p className="text-xs text-muted-foreground mt-1">Spending since Monday</p>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Visual Analytics charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -211,7 +233,7 @@ export default function DashboardPage() {
               {charts?.expense_categories.map((item, index) => (<div key={item.name} className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}/>
-                    <span className="font-medium truncate max-w-[100px]">{item.name}</span>
+                    <span className="font-medium truncate max-w-25">{item.name}</span>
                   </div>
                   <span className="text-muted-foreground font-semibold">
                     {formatCurrency(item.value, user?.currency)} ({item.percentage}%)
@@ -296,7 +318,7 @@ export default function DashboardPage() {
               <div className="space-y-3">
                 {activities?.expenses.length === 0 ? (<p className="text-xs text-muted-foreground py-4 text-center">No expenses recorded yet.</p>) : (activities?.expenses.map((e) => (<div key={e.id} className="flex justify-between items-center p-3 bg-secondary/30 rounded-xl text-xs">
                       <div>
-                        <p className="font-semibold truncate max-w-[120px]">{e.name}</p>
+                        <p className="font-semibold truncate max-w-30">{e.name}</p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">{e.category_name} • {new Date(e.date).toLocaleDateString()}</p>
                       </div>
                       <span className="font-bold text-destructive flex items-center">
@@ -312,7 +334,7 @@ export default function DashboardPage() {
               <div className="space-y-3">
                 {activities?.incomes.length === 0 ? (<p className="text-xs text-muted-foreground py-4 text-center">No income entries yet.</p>) : (activities?.incomes.map((i) => (<div key={i.id} className="flex justify-between items-center p-3 bg-secondary/30 rounded-xl text-xs">
                       <div>
-                        <p className="font-semibold truncate max-w-[120px]">{i.source}</p>
+                        <p className="font-semibold truncate max-w-30">{i.source}</p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">{new Date(i.date).toLocaleDateString()}</p>
                       </div>
                       <span className="font-bold text-emerald-500">
@@ -324,5 +346,5 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    </div>);
+    </motion.div>);
 }

@@ -7,6 +7,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
 import { Search, Plus, Trash2, Edit2, Download, Calendar, X, Loader2, ChevronLeft, ChevronRight, Upload, Paperclip } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
+
 const incomeSchema = zod.object({
     source: zod.string().min(1, "Please select an income source"),
     amount: zod.coerce.number().min(0.01, "Amount must be greater than 0"),
@@ -183,9 +198,14 @@ export default function IncomePage() {
         window.open(`${API_BASE_URL}reports/export/?${query}`, "_blank");
     };
     const sources = ["Salary", "Freelancing", "Business", "Investment", "Rental Income", "Bonus", "Other"];
-    return (<div className="space-y-6 max-w-7xl mx-auto">
+    return (<motion.div 
+      className="space-y-6 w-full"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Income Ledger</h2>
           <p className="text-muted-foreground text-sm">Monitor salary, projects, and cash influxes.</p>
@@ -195,23 +215,19 @@ export default function IncomePage() {
               <Trash2 className="h-4 w-4"/> Bulk Delete ({selectedIds.length})
             </button>)}
           
-          {/* Export Dropdown */}
-          <div className="relative group">
-            <button className="py-2.5 px-4 bg-secondary border border-border text-foreground rounded-xl font-semibold text-xs flex items-center gap-2 hover:bg-border transition-colors cursor-pointer">
-              <Download className="h-4 w-4"/> Export Report
-            </button>
-            <div className="absolute right-0 mt-1 w-36 bg-card border border-border rounded-xl shadow-lg hidden group-hover:block overflow-hidden z-20">
-              <button onClick={() => handleExport("csv")} className="w-full text-left px-4 py-2 hover:bg-secondary text-xs font-semibold cursor-pointer">Export CSV</button>
-              <button onClick={() => handleExport("excel")} className="w-full text-left px-4 py-2 hover:bg-secondary text-xs font-semibold cursor-pointer">Export Excel</button>
-              <button onClick={() => handleExport("pdf")} className="w-full text-left px-4 py-2 hover:bg-secondary text-xs font-semibold cursor-pointer">Export PDF</button>
-            </div>
-          </div>
+          <button onClick={() => handleExport("excel")} className="py-2.5 px-4 bg-secondary border border-border text-emerald-600 rounded-xl font-semibold text-xs flex items-center gap-2 hover:bg-emerald-500/10 transition-colors cursor-pointer">
+            <Download className="h-4 w-4"/> Excel
+          </button>
+          
+          <button onClick={() => handleExport("pdf")} className="py-2.5 px-4 bg-secondary border border-border text-rose-600 rounded-xl font-semibold text-xs flex items-center gap-2 hover:bg-rose-500/10 transition-colors cursor-pointer">
+            <Download className="h-4 w-4"/> PDF
+          </button>
 
           <button onClick={handleOpenAddModal} className="py-2.5 px-4 bg-emerald-600 text-white rounded-xl font-semibold text-xs flex items-center gap-2 hover:bg-emerald-500 shadow-md shadow-emerald-600/25 cursor-pointer">
             <Plus className="h-4 w-4"/> Add Income
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Filters */}
       <div className="bg-card border border-border rounded-2xl p-4 shadow-sm">
@@ -400,5 +416,5 @@ export default function IncomePage() {
             </form>
           </div>
         </div>)}
-    </div>);
+    </motion.div>);
 }

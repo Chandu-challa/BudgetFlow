@@ -7,6 +7,20 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
 import { Plus, Trash2, Calendar, X, Loader2, PiggyBank } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
 
 const budgetSchema = zod.object({
   budget_type: zod.string().min(1, "Please select budget type"),
@@ -122,8 +136,13 @@ export default function BudgetsPage() {
   };
 
   return (
-    <div className="space-y-2 mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <motion.div 
+      className="space-y-6 w-full"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
             Budget Planning
@@ -135,9 +154,9 @@ export default function BudgetsPage() {
         <button onClick={handleOpenAddModal} className="py-2.5 px-4 bg-primary text-white rounded-xl font-semibold text-xs flex items-center gap-2 hover:bg-primary/95 shadow-md cursor-pointer">
           <Plus className="h-4 w-4"/> Create Budget
         </button>
-      </div>
+      </motion.div>
 
-      <div className="bg-card border border-border rounded-2xl p-4 shadow-sm flex flex-wrap gap-4 items-center">
+      <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-4 shadow-sm flex flex-wrap gap-4 items-center">
         <div className="flex items-center gap-2">
           <Calendar className="h-4.5 w-4.5 text-slate-500"/>
           <span className="text-sm font-semibold text-muted-foreground">
@@ -153,7 +172,7 @@ export default function BudgetsPage() {
         <span className="text-xs text-muted-foreground max-w-sm ml-2">
           (Shows utilization for that exact day for Daily budgets, that month for Monthly budgets, etc.)
         </span>
-      </div>
+      </motion.div>
 
       {loading ? (
         <div className="py-20 text-center flex flex-col items-center justify-center gap-3">
@@ -161,7 +180,7 @@ export default function BudgetsPage() {
           <span className="text-sm text-muted-foreground">Loading budgets...</span>
         </div>
       ) : budgets.length === 0 ? (
-        <div className="bg-card border border-border rounded-3xl p-12 text-center max-w-xl mx-auto flex flex-col items-center gap-3">
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-12 text-center max-w-xl mx-auto flex flex-col items-center gap-3">
           <PiggyBank className="h-12 w-12 text-slate-600 mb-2"/>
           <h3 className="text-lg font-bold">No Active Budgets</h3>
           <p className="text-xs text-muted-foreground">
@@ -170,14 +189,14 @@ export default function BudgetsPage() {
           <button onClick={handleOpenAddModal} className="py-2.5 px-4 bg-primary text-white rounded-xl font-semibold text-xs mt-3 hover:bg-primary/95 cursor-pointer">
             Create Budget Limit
           </button>
-        </div>
+        </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {budgets.map((b) => {
             const isOver = b.actual_amount > b.budget_amount;
             const pct = Math.min(b.utilization_pct, 100);
             return (
-              <div key={b.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:shadow-md transition-all">
+              <motion.div variants={itemVariants} key={b.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4 hover:shadow-md transition-all">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-bold text-sm tracking-tight truncate max-w-37.5">
@@ -214,7 +233,7 @@ export default function BudgetsPage() {
                     <span className="text-sm text-foreground">{formatCurrency(b.actual_amount, user?.currency)}</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -282,6 +301,6 @@ export default function BudgetsPage() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

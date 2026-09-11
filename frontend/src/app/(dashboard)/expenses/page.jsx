@@ -7,6 +7,20 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
 import { Search, Plus, Trash2, Edit2, Download, Calendar, X, Loader2, ChevronLeft, ChevronRight, Upload, Paperclip, Copy, TrendingUp, BarChart3, CreditCard } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
 
 const expenseSchema = zod.object({
   name: zod.string().min(2, "Name must be at least 2 characters"),
@@ -243,10 +257,15 @@ export default function ExpensesPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-7rem)] overflow-hidden  mx-auto gap-3">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="flex flex-col h-[calc(100vh-7rem)] overflow-hidden w-full gap-3"
+    >
       
       {/* Actions Row (Very Compact) */}
-      <div className="flex justify-end items-center shrink-0">
+      <motion.div variants={itemVariants} className="flex justify-end items-center shrink-0">
         <div className="flex gap-2">
           {selectedIds.length > 0 && (
             <button onClick={handleBulkDelete} className="h-8 px-3 bg-destructive text-white rounded-lg font-semibold text-[11px] flex items-center gap-1.5 hover:bg-destructive/90 transition-colors shadow-sm cursor-pointer">
@@ -254,22 +273,19 @@ export default function ExpensesPage() {
             </button>
           )}
           
-          <div className="relative group">
-            <button className="h-8 px-3 bg-secondary border border-border text-foreground rounded-lg font-semibold text-[11px] flex items-center gap-1.5 hover:bg-border transition-colors cursor-pointer">
-              <Download className="h-3.5 w-3.5"/> Export
-            </button>
-            <div className="absolute right-0 mt-1 w-32 bg-card border border-border rounded-lg shadow-lg hidden group-hover:block overflow-hidden z-20">
-              <button onClick={() => handleExport("csv")} className="w-full text-left px-3 py-2 hover:bg-secondary text-[11px] font-semibold cursor-pointer">Export CSV</button>
-              <button onClick={() => handleExport("excel")} className="w-full text-left px-3 py-2 hover:bg-secondary text-[11px] font-semibold cursor-pointer">Export Excel</button>
-              <button onClick={() => handleExport("pdf")} className="w-full text-left px-3 py-2 hover:bg-secondary text-[11px] font-semibold cursor-pointer">Export PDF</button>
-            </div>
-          </div>
+          <button onClick={() => handleExport("excel")} className="h-8 px-3 bg-secondary border border-border text-emerald-600 rounded-lg font-semibold text-[11px] flex items-center gap-1.5 hover:bg-emerald-500/10 transition-colors cursor-pointer">
+            <Download className="h-3.5 w-3.5"/> Excel
+          </button>
+          
+          <button onClick={() => handleExport("pdf")} className="h-8 px-3 bg-secondary border border-border text-rose-600 rounded-lg font-semibold text-[11px] flex items-center gap-1.5 hover:bg-rose-500/10 transition-colors cursor-pointer">
+            <Download className="h-3.5 w-3.5"/> PDF
+          </button>
 
           <button onClick={() => handleOpenAddModal()} className="h-8 px-3 bg-primary text-white rounded-lg font-semibold text-[11px] flex items-center gap-1.5 hover:bg-primary/95 shadow-sm shadow-primary/25 cursor-pointer">
             <Plus className="h-3.5 w-3.5"/> Add Expense
           </button>
         </div>
-      </div>
+      </motion.div>
 
 
 
@@ -538,6 +554,6 @@ export default function ExpensesPage() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
